@@ -19,9 +19,9 @@ class _TreapNode(object):
         self.left_son = left_son
         self.right_son = right_son
 
-        self.height_of_subtree = 1
-        self.height_of_subtree += left_son.height_of_subtree if left_son is not None else 0
-        self.height_of_subtree += right_son.height_of_subtree if right_son is not None else 0
+        self.weight_of_subtree = 1
+        self.weight_of_subtree += left_son.weight_of_subtree if left_son is not None else 0
+        self.weight_of_subtree += right_son.weight_of_subtree if right_son is not None else 0
 
         self.min_key = self.max_key = key
         if left_son is not None:
@@ -52,9 +52,9 @@ class _TreapNode(object):
     # Assumes that his sons are already updated
     def update_fields(self):
 
-        self.height_of_subtree = 1
-        self.height_of_subtree += self.left_son.height_of_subtree if self.left_son is not None else 0
-        self.height_of_subtree += self.right_son.height_of_subtree if self.right_son is not None else 0
+        self.weight_of_subtree = 1
+        self.weight_of_subtree += self.left_son.weight_of_subtree if self.left_son is not None else 0
+        self.weight_of_subtree += self.right_son.weight_of_subtree if self.right_son is not None else 0
 
         self.min_key = self.max_key = self.key
         if self.left_son is not None:
@@ -158,7 +158,7 @@ class Treap(object):
     # Support join
     def join(self, treap_higher):
         if self.get_max_key() > treap_higher.get_min_key():
-            raise ValueError("All keys from the treap must be lower than those from the higher treap.")
+            raise ValueError("All keys from the treap must be lower than those of the higher treap.")
 
         middle_key = self.get_max_key() + 0.5
 
@@ -169,6 +169,10 @@ class Treap(object):
         return join_treap
 
     # Queries
+
+    def size(self):
+        return self._root.weight_of_subtree
+
     @staticmethod
     def _items(node, items_list):
 
@@ -235,15 +239,15 @@ class Treap(object):
         if node is None:
             return None
 
-        left_son_height = node.left_son.height_of_subtree if node.left_son is not None else 0
+        left_son_weight = node.left_son.weight_of_subtree if node.left_son is not None else 0
 
-        if k == left_son_height:
+        if k == left_son_weight:
             return node.key, node.value
 
-        if k < left_son_height:
+        if k < left_son_weight:
             return Treap._get_kth_element(node.left_son, k)
         else:
-            return Treap._get_kth_element(node.right_son, k - left_son_height - 1)
+            return Treap._get_kth_element(node.right_son, k - left_son_weight - 1)
 
 
     def get_kth_element(self, k):
@@ -331,7 +335,7 @@ class TestTreapOperations(unittest.TestCase):
             k, v = self.treap.choose_element()
             self.treap.erase(k)
 
-        self.assertTrue(self.treap._root.height_of_subtree == len(self.treap.items()))
+        self.assertTrue(self.treap._root.weight_of_subtree == len(self.treap.items()))
 
         number_of_indexing_queries = 1000
         for i in range(number_of_indexing_queries):
