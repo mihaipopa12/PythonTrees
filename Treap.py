@@ -113,6 +113,10 @@ class Treap(object):
 
         self._root = Treap._insert(self._root, key, value, priority)
 
+    def __setitem__(self, key, value):
+
+        self.insert(key, value)
+
     # Support erasing
     @staticmethod
     def _erase(node, key):
@@ -168,6 +172,9 @@ class Treap(object):
 
         return join_treap
 
+    def __add__(self, other):
+        return self.join(other)
+
     # Queries
 
     def size(self):
@@ -193,7 +200,7 @@ class Treap(object):
         return [key for key, value in self.items()]
 
     def choose_element(self):
-        return random.choice(self.items())
+        return self.get_kth_element(random.randint(0, self.size() - 1))
 
     @staticmethod
     def _get_height(node, current_height):
@@ -253,6 +260,24 @@ class Treap(object):
     def get_kth_element(self, k):
         return Treap._get_kth_element(self._root, k)
 
+    @staticmethod
+    def _look_up(node, key):
+        if node is None:
+            return None
+
+        if key == node.key:
+            return node.value
+        if key < node.key:
+            return Treap._look_up(node.left_son, key)
+        else:
+            return Treap._look_up(node.right_son, key)
+
+    def look_up(self, key):
+        return Treap._look_up(self._root, key)
+
+    def __getitem__(self, key):
+        return self.look_up(key)
+
 ########################## Testing
 
 class TestTreapOperations(unittest.TestCase):
@@ -265,7 +290,8 @@ class TestTreapOperations(unittest.TestCase):
         for i in range(self.number_of_insertions):
             key = random.randint(1, 1000000)
             value = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(50))
-            self.treap.insert(key, value)
+            # self.treap.insert(key, value)
+            self.treap[key] = value
 
     @staticmethod
     def is_sorted(L):
@@ -321,7 +347,7 @@ class TestTreapOperations(unittest.TestCase):
         self.assertTrue(all(current_key > k  for current_key in t2.keys()))
 
         # Test the join
-        t = t1.join(t2)
+        t = t1 + t2
         # the items lists must be sorted by keys
         self.assertTrue(TestTreapOperations.is_sorted(t.keys()))
 
@@ -354,6 +380,13 @@ class TestTreapOperations(unittest.TestCase):
                 pass
 
             self.assertTrue(k == correct_k)
+
+        number_of_getitem_queries = 1000
+        for i in range(number_of_getitem_queries):
+            k, v = self.treap.choose_element()
+
+            self.assertTrue(self.treap.look_up(k) == v)
+            self.assertTrue(self.treap[k] == v)
 
 if __name__ == "__main__":
     unittest.main()
