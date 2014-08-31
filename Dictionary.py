@@ -8,12 +8,21 @@ class Dictionary(object):
     def insert(self, key, value = None):
         """ Associates a value to a key.
             Complexity: O(log n)
+        :param key: The inserted key.
+        :param value: The associated value.
+        :return: None
         """
 
     def __setitem__(self, key, value):
-
         self.insert(key, value)
 
+    @abc.abstractmethod
+    def erase(self, key):
+        """ Deletes a key from the data structure.
+            Complexity: O(log n)
+        :param key: The key to be deleted
+        :return: None
+        """
     # Queries
 
     @abc.abstractmethod
