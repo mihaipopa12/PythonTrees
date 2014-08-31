@@ -27,7 +27,9 @@ class Dictionary(object):
 
     @abc.abstractmethod
     def size(self):
-        """ Returns the size of the dictionary. """
+        """ Complexity: O(1)
+        :return The size of the dictionary.
+        """
 
     @staticmethod
     def _items(node, items_list):

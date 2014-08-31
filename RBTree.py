@@ -99,6 +99,7 @@ class RBTree(Dictionary):
 
     def __init__(self, root = None):
         self._root = root
+        self._size = 0
 
     def _insert(self, node, parent, key, value):
         if node is None:
@@ -170,6 +171,7 @@ class RBTree(Dictionary):
     def insert(self, key, value = None):
         self._root, inserted_node = self._insert(self._root, None, key, value)
         if inserted_node is not None:
+            self._size += 1
             self._checkCase1(inserted_node)
 
     def _erase(self, node):
@@ -259,6 +261,9 @@ class RBTree(Dictionary):
         node_to_be_erased = RBTree._find(self._root, key)
         if node_to_be_erased is None:
             return
+
+        self._size -= 1
+
         replacing_node = RBTree._get_left_most(node_to_be_erased.right_son)
         if replacing_node is None:
             replacing_node = node_to_be_erased
@@ -273,7 +278,7 @@ class RBTree(Dictionary):
 
     # Specific queries
     def size(self):
-        raise NotImplementedError
+        return self._size
 
     @staticmethod
     def _find(node, key):
