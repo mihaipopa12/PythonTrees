@@ -1,11 +1,13 @@
+#!/usr/bin/python3
 
 import abc
+
 
 class Dictionary(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def insert(self, key, value = None):
+    def insert(self, key, value=None):
         """ Associates a value to a key.
             Complexity: O(log n)
         :param key: The inserted key.
@@ -23,13 +25,24 @@ class Dictionary(object):
         :param key: The key to be deleted
         :return: None
         """
+
     # Queries
 
+    @property
     @abc.abstractmethod
     def size(self):
         """ Complexity: O(1)
         :return The size of the dictionary.
         """
+
+    @property
+    @abc.abstractmethod
+    def get_root(self):
+        """
+        Complexity: O(1)
+        :return: The root of the tree.
+        """
+        return self._root
 
     @staticmethod
     def _items(node, items_list):
@@ -88,3 +101,24 @@ class Dictionary(object):
 
     def __getitem__(self, key):
         return self.look_up(key)
+
+    @staticmethod
+    def _find(node, key, parent=None):
+        if node is None:
+            return None, parent
+
+        if key == node.key:
+            return node, parent
+        if key < node.key:
+            return Dictionary._find(node.left_son, key, parent)
+        else:
+            return Dictionary._find(node.right_son, key, parent)
+
+    @staticmethod
+    def _get_left_most(node):
+        if node is None:
+            return None
+
+        if node.left_son is None:
+            return node
+        return Dictionary._get_left_most(node.left_son)
