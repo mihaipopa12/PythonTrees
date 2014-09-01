@@ -1,16 +1,15 @@
 #!/usr/bin/python3
 
+from Dictionary import Dictionary
 import random
 
 import unittest
 import string
 
-from Dictionary import Dictionary
-
 
 class _TreapNode(object):
 
-    def __init__(self, key, value, left_son = None, right_son = None, priority = None):
+    def __init__(self, key, value, left_son=None, right_son=None, priority=None):
 
         self.key = key
         self.value = value
@@ -70,8 +69,11 @@ class _TreapNode(object):
 
 class Treap(Dictionary):
 
-    def __init__(self, root = None):
+    def __init__(self, root=None):
         self._root = root
+
+    def get_root(self):
+        return self._root
 
     @staticmethod
     def _balance(node):
@@ -93,7 +95,7 @@ class Treap(Dictionary):
     def _insert(node, key, value, _priority):
 
         if node is None:
-            return _TreapNode(key, value, priority = _priority)
+            return _TreapNode(key, value, priority=_priority)
 
         if node.key == key:
             # replace the old value with the new one
@@ -110,7 +112,7 @@ class Treap(Dictionary):
 
         return node
 
-    def insert(self, key, value = None, priority = None):
+    def insert(self, key, value=None, priority=None):
 
         self._root = Treap._insert(self._root, key, value, priority)
 
@@ -159,11 +161,11 @@ class Treap(Dictionary):
     # Support join
     def join(self, treap_higher):
         if self.get_max_key() > treap_higher.get_min_key():
-            raise ValueError("All keys from the treap must be lower than those of the higher treap.")
+            raise ValueError("All keys from the current treap must be lower than those of the argument treap.")
 
         middle_key = self.get_max_key() + 0.5
 
-        joining_root = _TreapNode(middle_key, None, self._root, treap_higher._root)
+        joining_root = _TreapNode(middle_key, None, self._root, treap_higher.get_root())
         join_treap = Treap(joining_root)
         join_treap.erase(middle_key)
 
@@ -225,7 +227,9 @@ class Treap(Dictionary):
     def get_kth_element(self, k):
         return Treap._get_kth_element(self._root, k)
 
+
 ########################## Testing
+
 
 class TestTreapOperations(unittest.TestCase):
 
@@ -257,10 +261,10 @@ class TestTreapOperations(unittest.TestCase):
 
         # the items list must be sorted by keys
         self.assertTrue(TestTreapOperations.is_sorted(self.treap.keys()))
-        print (self.treap.get_height())
+        print ("The height of the treap is: " + str(self.treap.get_height()))
 
         # the treap must have the apropiate structure
-        # self.assertTrue(TestTreapOperations.check_treap_priorities(self.treap._root))
+        self.assertTrue(TestTreapOperations.check_treap_priorities(self.treap._root))
 
     def test_erase(self):
 

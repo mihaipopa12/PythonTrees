@@ -5,12 +5,11 @@ from Dictionary import Dictionary
 import unittest
 import string
 import random
-import sys
 
 
 class RBNode(object):
 
-    def __init__(self, colour, key, value = None, parent = None, left_son = None, right_son = None):
+    def __init__(self, colour, key, value=None, parent=None, left_son=None, right_son=None):
 
         self.colour = colour
         self.key = key
@@ -59,7 +58,7 @@ class RBNode(object):
 
         return root
 
-    def rotate_left(self, root = None):
+    def rotate_left(self, root=None):
 
         right_son = self.right_son
         self.right_son = right_son.left_son
@@ -97,9 +96,12 @@ class RBNode(object):
 
 class RBTree(Dictionary):
 
-    def __init__(self, root = None):
+    def __init__(self, root=None):
         self._root = root
         self._size = 0
+
+    def get_root(self):
+        return self._root
 
     def _insert(self, node, parent, key, value):
         if node is None:
@@ -168,7 +170,7 @@ class RBTree(Dictionary):
         else:
             raise AssertionError
 
-    def insert(self, key, value = None):
+    def insert(self, key, value=None):
         self._root, inserted_node = self._insert(self._root, None, key, value)
         if inserted_node is not None:
             self._size += 1
@@ -258,13 +260,13 @@ class RBTree(Dictionary):
             node.detach()
 
     def erase(self, key):
-        node_to_be_erased = RBTree._find(self._root, key)
+        node_to_be_erased = Dictionary._find(self._root, key)[0]
         if node_to_be_erased is None:
             return
 
         self._size -= 1
 
-        replacing_node = RBTree._get_left_most(node_to_be_erased.right_son)
+        replacing_node = Dictionary._get_left_most(node_to_be_erased.right_son)
         if replacing_node is None:
             replacing_node = node_to_be_erased
 
@@ -276,31 +278,9 @@ class RBTree(Dictionary):
             # Delete the root
             self._root = None
 
-    # Specific queries
+    # Queries
     def size(self):
         return self._size
-
-    @staticmethod
-    def _find(node, key):
-        if node is None:
-            return None
-
-        if key == node.key:
-            return node
-        if key < node.key:
-            return RBTree._find(node.left_son, key)
-        else:
-            return RBTree._find(node.right_son, key)
-
-    @staticmethod
-    def _get_left_most(node):
-        if node is None:
-            return None
-
-        if node.left_son is None:
-            return node
-        return RBTree._get_left_most(node.left_son)
-
 
 ########################## Testing
 
@@ -311,7 +291,7 @@ class TestRBTreeOperations(unittest.TestCase):
         self.rbtree = RBTree()
 
         # populate the rbtree
-        self.number_of_insertions = 1000
+        self.number_of_insertions = 10000
         for i in range(self.number_of_insertions):
             key = random.randint(1, 1000000)
             value = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(50))
